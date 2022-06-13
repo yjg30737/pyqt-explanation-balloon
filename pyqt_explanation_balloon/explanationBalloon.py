@@ -7,14 +7,19 @@ from pyqt_svg_button import SvgButton
 
 
 class ExplanationBalloon(QWidget):
-    def __init__(self, x: float, y: float, width: float, height: float, text: str):
+    def __init__(self, widget, width: float, height: float, text: str):
         super().__init__()
-        self.__initUi(x, y, width, height, text)
+        self.__widget = widget
+        self.__widget.installEventFilter(self)
+        self.__window = self.__widget.window()
+        self.__window.installEventFilter(self)
 
-    def __initUi(self, x, y, width, height, text):
+        self.__initUi(width, height, text)
+
+    def __initUi(self, width, height, text):
         self.setFixedSize(width + 2, height + 10)
-        self.__initBalloon(x, y, width, height, text)
-        self.setWindowFlags(Qt.FramelessWindowHint | Qt.SubWindow | Qt.WindowStaysOnTopHint)
+        self.__initBalloon(width, height, text)
+        self.setWindowFlags(Qt.FramelessWindowHint | Qt.SubWindow)
         self.setAttribute(Qt.WA_TranslucentBackground)
         eff = QGraphicsDropShadowEffect(self)
         eff.setOffset(0, 0)
@@ -33,16 +38,14 @@ class ExplanationBalloon(QWidget):
         lay.setContentsMargins(5, 5, 5, 5)
         self.setLayout(lay)
 
-    def __initBalloon(self, x, y, width, height, text):
+    def __initBalloon(self, width, height, text):
         self.__border_width = 1
-        self.__x = x
-        self.__y = y
         self.__width = width
         self.__height = height
         self.__text = text
-        self.__balloon = self.__getBalloonShape(self.__x, self.__y, self.__width, self.__height)
+        self.__balloon = self.__getBalloonShape(self.__width, self.__height)
 
-    def __setIsosceles(self, x: float, y: float, width: float, height: float, orientation=Qt.Horizontal) -> QPainterPath:
+    def __setIsosceles(self, x, y, width: float, height: float, orientation=Qt.Horizontal) -> QPainterPath:
         isosceles = QPainterPath()
         # horizontal
         x1 = x
@@ -73,14 +76,27 @@ class ExplanationBalloon(QWidget):
 
         return super().paintEvent(e)
 
-    def __getBalloonShape(self, x: float, y: float, width: float, height: float):
+    def __getBalloonShape(self, width: float, height: float):
         path1 = QPainterPath()
-        path1.addRoundedRect(x, y, width, height, 10.0, 10.0)
+        path1.addRoundedRect(0, 0, width, height, 10.0, 10.0)
 
-        path2 = self.__setIsosceles(x + 20.0, y + height - 3, 30.0, 10.0)
+        path2 = self.__setIsosceles(20.0, height - 3, 30.0, 10.0)
 
         path3 = path2.united(path1)
 
         return path3
 
+    def setPosition(self):
+        x, y = self.__widget.geometry().x(), self.__widget.geometry().y()
+        x, y = x + self.__window.geometry().x(), y + self.__window.geometry().y()
+        self.move(x, y-self.height())
+
+    def eventFilter(self, obj, e):
+        if isinstance(obj, type(self.__widget)):
+            self.setPosition()
+        elif isinstance(obj, type(self.__window)):
+            self.raise_()
+            if e.type() == 13 or e.type() == 14:
+                self.setPosition()
+        return super().eventFilter(obj, e)
 
