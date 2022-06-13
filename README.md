@@ -10,8 +10,20 @@ PyQt explanation balloon
 ## Included Packages
 * <a href="https://github.com/yjg30737/pyqt-svg-button.git">pyqt-svg-button</a>
 
+## Preview
+
+Explanation balloon can be used to explain certain widget. You can close this balloon with X button at the top right. 
+
+![image](https://user-images.githubusercontent.com/55078043/173282320-6fe4a07b-27dc-47b9-af1b-3d531f9c408b.png)
+
+You can set the widget which you want to describe with balloon. 
+
+You can also set the size and content of balloon with constructor. Check the class overview below.
+
+This explanation balloon is perfectly responsive to window's resize/move/activate/deactivate event.
+
 ## Class Overview
-* `ExplanationBalloon(x: float, y: float, width: float, height: float, text: str)` - Constructor
+* `ExplanationBalloon(widget, width: float, height: float, text: str)` - Constructor. `widget` is the widget which is supposed to be explained by explanation balloon.
 
 ## Example
 ```python
@@ -36,7 +48,7 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(mainWidget)
 
-        self.__eb = ExplanationBalloon(0, 0, 200.0, 100.0, 'This is explanation balloon\nmade out of PyQt')
+        self.__eb = ExplanationBalloon(btn, 200.0, 100.0, 'This is explanation balloon\nmade out of PyQt')
         btn.clicked.connect(self.__eb.show)
 
 
@@ -51,4 +63,7 @@ if __name__ == "__main__":
 
 Result
 
-![image](https://user-images.githubusercontent.com/55078043/173264369-c7023c03-18d0-44a9-aabb-a4fad215f742.png)
+![image](https://user-images.githubusercontent.com/55078043/173282320-6fe4a07b-27dc-47b9-af1b-3d531f9c408b.png)
+
+This explanation balloon is perfectly responsive to window's resize/move/activate/deactivate event.
+
