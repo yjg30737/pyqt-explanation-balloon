@@ -22,7 +22,8 @@ class ExplanationBalloon(QWidget):
         self.setGraphicsEffect(eff)
 
         self.__btn = SvgButton(self)
-        self.__btn.setIcon('close.svg')
+        ico_filename = os.path.join(os.path.dirname(__file__), 'ico/close.svg')
+        self.__btn.setIcon(ico_filename)
         self.__btn.setFixedSize(14, 14)
         self.__btn.setAsCircle()
         self.__btn.clicked.connect(self.close)
