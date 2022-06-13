@@ -4,6 +4,9 @@ PyQt explanation balloon
 ## Requirements
 * PyQt5 >= 5.8
 
+## Setup
+`python -m pip install pyqt-explanation-balloon`
+
 ## Included Packages
 * <a href="https://github.com/yjg30737/pyqt-svg-button.git">pyqt-svg-button</a>
 
