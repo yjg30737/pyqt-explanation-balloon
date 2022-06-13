@@ -64,6 +64,3 @@ if __name__ == "__main__":
 Result
 
 ![image](https://user-images.githubusercontent.com/55078043/173282320-6fe4a07b-27dc-47b9-af1b-3d531f9c408b.png)
-
-This explanation balloon is perfectly responsive to window's resize/move/activate/deactivate event.
-
