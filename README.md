@@ -10,6 +10,9 @@ PyQt explanation balloon
 ## Included Packages
 * <a href="https://github.com/yjg30737/pyqt-svg-button.git">pyqt-svg-button</a>
 
+## Usage
+Constructor - `ExplanationBalloon(x: float, y: float, width: float, height: float, text: str)`
+
 ## Example
 ```python
 from PyQt5.QtWidgets import QMainWindow, QPushButton, QApplication, QVBoxLayout, QWidget
