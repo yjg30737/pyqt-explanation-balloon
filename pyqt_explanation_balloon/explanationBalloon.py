@@ -1,14 +1,14 @@
 import os
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter, QBrush, QColor, QPen, QPainterPath
-from PyQt5.QtWidgets import QWidget, QGraphicsDropShadowEffect, QGridLayout
-from pyqt_svg_button import SvgButton
+from PyQt5.QtGui import QPainter, QBrush, QColor, QPen, QPainterPath, QTextOption, QIcon
+from PyQt5.QtWidgets import QWidget, QGraphicsDropShadowEffect, QGridLayout, QPushButton
 
 
 class ExplanationBalloon(QWidget):
     def __init__(self, widget, width: float, height: float, text: str):
         super().__init__()
+        self.installEventFilter(self)
         self.__widget = widget
         self.__widget.installEventFilter(self)
         self.__window = self.__widget.window()
@@ -26,11 +26,9 @@ class ExplanationBalloon(QWidget):
         eff.setBlurRadius(5.0)
         self.setGraphicsEffect(eff)
 
-        self.__btn = SvgButton(self)
+        self.__btn = QPushButton()
         ico_filename = os.path.join(os.path.dirname(__file__), 'ico/close.svg')
-        self.__btn.setIcon(ico_filename)
-        self.__btn.setFixedSize(14, 14)
-        self.__btn.setAsCircle()
+        self.__btn.setIcon(QIcon(ico_filename))
         self.__btn.clicked.connect(self.close)
 
         lay = QGridLayout()
@@ -43,6 +41,7 @@ class ExplanationBalloon(QWidget):
         self.__width = width
         self.__height = height
         self.__text = text
+        self.__background_color = QColor(241, 241, 241, 255)
         self.__balloon = self.__getBalloonShape(self.__width, self.__height)
 
     def __setIsosceles(self, x, y, width: float, height: float, orientation=Qt.Horizontal) -> QPainterPath:
@@ -66,13 +65,16 @@ class ExplanationBalloon(QWidget):
 
     def paintEvent(self, e):
         painter = QPainter(self)
-        brush = QBrush(QColor(50, 50, 50, 255))
+        brush = QBrush(self.__background_color)
         pen = QPen(QColor(Qt.darkGray), self.__border_width)
         painter.setPen(pen)
         painter.setBrush(brush)
         painter.setRenderHint(QPainter.Antialiasing)
         painter.drawPath(self.__balloon)
-        painter.drawText(self.__balloon.boundingRect(), Qt.AlignCenter, self.__text)
+        textOption = QTextOption()
+        textOption.setAlignment(Qt.AlignCenter)
+        textOption.setWrapMode(QTextOption.WordWrap)
+        painter.drawText(self.__balloon.boundingRect(), self.__text, textOption)
 
         return super().paintEvent(e)
 
@@ -91,12 +93,21 @@ class ExplanationBalloon(QWidget):
         x, y = x + self.__window.geometry().x(), y + self.__window.geometry().y()
         self.move(x, y-self.height())
 
+    def setBackgroundColor(self, color: QColor):
+        self.__background_color = color
+
     def eventFilter(self, obj, e):
         if isinstance(obj, type(self.__widget)):
             self.setPosition()
         elif isinstance(obj, type(self.__window)):
             self.raise_()
+            # if window has moved or resized
             if e.type() == 13 or e.type() == 14:
                 self.setPosition()
+        elif isinstance(obj, type(self)):
+            # if font has changed
+            # should i resize the balloon or let user set on his own?
+            if e.type() == 97:
+                print(self.fontMetrics().boundingRect(self.__text))
         return super().eventFilter(obj, e)
 
