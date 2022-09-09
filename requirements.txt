@@ -1,1 +1,0 @@
-pyqt_svg_button>=0.0.1
