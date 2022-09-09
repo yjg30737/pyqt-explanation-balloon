@@ -106,7 +106,7 @@ class ExplanationBalloon(QWidget):
                 self.setPosition()
         elif isinstance(obj, type(self)):
             # if font has changed
-            # should i resize the balloon or let user set on his own?
+            # should resize the balloon or let user set on his own?
             if e.type() == 97:
                 print(self.fontMetrics().boundingRect(self.__text))
         return super().eventFilter(obj, e)
